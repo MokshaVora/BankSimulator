@@ -1,10 +1,17 @@
 import math
+from os import name
+import pandas as pd
 
+class User:
+    def __init__(self, id, name, password):
+        self.id = id
+        self.name = name
+        self.password = password
 
-
-class Account:
-    def __init__(self):
+class Account (User):
+    def __init__(self, id, name, password):
         self.balance = 0
+        User.__init__(self, id, name, password)
 
     def credit(self, x=0, y=0):
         amount = x + y/100
@@ -26,7 +33,27 @@ class Account:
             print("Current Balance: "+ str(d) + "D " + str(c) + "C")
 
 if __name__ == '__main__':
-    user = Account()
+
+    userdf = pd.read_csv('Database.csv')
+    print('Select an option:')
+    print('1. New user')
+    print('2. Login')
+    print('3. Exit')
+    opt = int(input())
+    if opt == 1:
+        name = input('Enter Name: ')
+        password = input('Enter Password: ')
+        user = Account(len(userdf)+1, name, password)
+        userdf.loc[len(userdf)] = (len(userdf)+1, name, password, user.balance)
+    elif opt == 2:
+        name = input('Enter Name: ')
+        password = input('Enter Password: ')
+        if len(userdf[(userdf['Name']==name) & (userdf['Password']==password)]) == 0:
+            exit(0)
+        else:
+            ind = userdf.index(userdf[(userdf['Name']==name) & (userdf['Password']==password)])
+    elif opt == 3:
+        exit(0)
 
     while True:
         print('Select an option: ')
